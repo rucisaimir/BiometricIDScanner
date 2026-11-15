@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BiometricIDScanner.MainPage"
+             BackgroundColor="#0F172A"
+             Title="ID Check-In &amp; Skaner Biometrik">
+
+    <ScrollView Padding="16">
+        <VerticalStackLayout Spacing="14">
+
+            <!-- Branded Header Banner -->
+            <Border BackgroundColor="#1E293B" Stroke="#334155" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="14">
+                <Grid ColumnDefinitions="56,*" ColumnSpacing="12" VerticalOptions="Center">
+                    <Border Grid.Column="0" WidthRequest="54" HeightRequest="54" BackgroundColor="#0F172A" Stroke="#38BDF8" StrokeThickness="1.5" StrokeShape="RoundRectangle 12" Padding="4">
+                        <Image Source="brand_logo.png" Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                            <Label Text="TERMINAL CHECK-IN / OUT NFC" FontSize="15" FontAttributes="Bold" TextColor="#38BDF8" VerticalOptions="Center" />
+                            <Border BackgroundColor="#065F46" StrokeThickness="0" StrokeShape="RoundRectangle 6" Padding="6,2" VerticalOptions="Center">
+                                <Label Text="PRO V6" FontSize="10" FontAttributes="Bold" TextColor="#34D399" />
+                            </Border>
+                        </HorizontalStackLayout>
+                        <Label x:Name="LblStatus" Text="Gati për skanim NFC. Afro kartën e ID-së pas celularit." FontSize="12" TextColor="#94A3B8" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Navigation Mode Switcher (3 Tabs) -->
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                <Button x:Name="BtnTabCheckIn" Grid.Column="0" Text="1. Check-In/Out" FontSize="12" FontAttributes="Bold" BackgroundColor="#0284C7" TextColor="White" CornerRadius="10" Clicked="OnTabCheckInClicked" />
+                <Button x:Name="BtnTabRegister" Grid.Column="1" Text="2. Regjistro ID" FontSize="12" FontAttributes="Bold" BackgroundColor="#1E293B" TextColor="#94A3B8" CornerRadius="10" Clicked="OnTabRegisterClicked" />
+                <Button x:Name="BtnTabReports" Grid.Column="2" Text="3. Raportet" FontSize="12" FontAttributes="Bold" BackgroundColor="#1E293B" TextColor="#94A3B8" CornerRadius="10" Clicked="OnTabReportsClicked" />
+            </Grid>
+
+            <!-- ==================== VIEW 1: CHECK-IN / CHECK-OUT TERMINAL ==================== -->
+            <VerticalStackLayout x:Name="ViewCheckIn" Spacing="14" IsVisible="True">
+
+                <!-- Live Terminal Status Card -->
+                <Border x:Name="TerminalCard" BackgroundColor="#1E293B" Stroke="#38BDF8" StrokeThickness="1.5" StrokeShape="RoundRectangle 16" Padding="20">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label x:Name="LblTerminalAction" Text="AFRO KARTËN E ID-SË TE NFC" FontSize="18" FontAttributes="Bold" TextColor="#38BDF8" HorizontalTextAlignment="Center" />
+                        <Label x:Name="LblTerminalEmployee" Text="Punonjësit e regjistruar bëjnë Check-In dhe Check-Out automatikisht pa shkruar asnjë kod." FontSize="14" TextColor="#CBD5E1" HorizontalTextAlignment="Center" />
+                        <Label x:Name="LblTerminalTime" Text="—" FontSize="13" FontAttributes="Bold" TextColor="#34D399" HorizontalTextAlignment="Center" />
+                        <Label x:Name="LblRegisteredCount" Text="Punonjës të regjistruar në sistem: 0" FontSize="11" TextColor="#64748B" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Quick Summary of Last Scanned Employee -->
+                <Border BackgroundColor="#1E293B" Stroke="#334155" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="PUNONJËSI I FUNDIT I SKANUAR" FontSize="11" FontAttributes="Bold" TextColor="#94A3B8" />
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                                <Label Text="Emri &amp; Mbiemri" FontSize="11" TextColor="#64748B" />
+                                <Entry x:Name="TxtQuickName" IsReadOnly="True" TextColor="White" FontAttributes="Bold" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                                <Label Text="Numri Personal (NID)" FontSize="11" TextColor="#38BDF8" />
+                                <Entry x:Name="TxtQuickNid" IsReadOnly="True" TextColor="#38BDF8" FontAttributes="Bold" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                                <Label Text="Statusi / Veprimi" FontSize="11" TextColor="#64748B" />
+                                <Entry x:Name="TxtQuickAction" IsReadOnly="True" TextColor="#34D399" FontAttributes="Bold" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                                <Label Text="Ora &amp; Kohëzgjatja" FontSize="11" TextColor="#64748B" />
+                                <Entry x:Name="TxtQuickTime" IsReadOnly="True" TextColor="White" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+
+            <!-- ==================== VIEW 2: REGISTER EMPLOYEE & BIOMETRIC TEXTBOXES ==================== -->
+            <VerticalStackLayout x:Name="ViewRegister" Spacing="14" IsVisible="False">
+
+                <Border BackgroundColor="#1E293B" Stroke="#F59E0B" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="REGJISTRIMI FILLESTAR I KARTËS SË PUNONJËSIT (1 HERË)" FontSize="12" FontAttributes="Bold" TextColor="#F59E0B" />
+                        <Label Text="Shkruaj 3 të dhënat e kartës dhe afroje pas telefonit. Sapo të lexohet, punonjësi ruhet në databazë dhe më pas bën Check-In/Out automatikisht!" FontSize="11" TextColor="#94A3B8" />
+                        
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+                            <VerticalStackLayout Grid.Row="0" Grid.ColumnSpan="2">
+                                <Label Text="Nr. i Dokumentit (9 karaktere, p.sh. 035113714)" FontSize="11" TextColor="#CBD5E1" />
+                                <Entry x:Name="TxtBacDocNo" Placeholder="Shkruaj Nr. e Kartës / Pasaportës" TextColor="White" PlaceholderColor="#64748B" BackgroundColor="#0F172A" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                                <Label Text="Datëlindja (VVMMDD)" FontSize="11" TextColor="#CBD5E1" />
+                                <Entry x:Name="TxtBacDob" Placeholder="p.sh. 910201" MaxLength="6" Keyboard="Numeric" TextColor="White" PlaceholderColor="#64748B" BackgroundColor="#0F172A" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                                <Label Text="Skadenca (VVMMDD)" FontSize="11" TextColor="#CBD5E1" />
+                                <Entry x:Name="TxtBacExp" Placeholder="p.sh. 291113" MaxLength="6" Keyboard="Numeric" TextColor="White" PlaceholderColor="#64748B" BackgroundColor="#0F172A" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Extracted Biometric Data Textboxes -->
+                <Border BackgroundColor="#1E293B" Stroke="#334155" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="TË DHËNAT BIOMETRIKE NGA ÇIPI (EF.DG1 TEXTBOX)" FontSize="12" FontAttributes="Bold" TextColor="#10B981" />
+
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                                <Label Text="Emri" FontSize="11" TextColor="#94A3B8" />
+                                <Entry x:Name="TxtFirstName" IsReadOnly="True" TextColor="#F8FAFC" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                                <Label Text="Mbiemri" FontSize="11" TextColor="#94A3B8" />
+                                <Entry x:Name="TxtLastName" IsReadOnly="True" TextColor="#F8FAFC" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                                <Label Text="Numri Personal (NID)" FontSize="11" TextColor="#38BDF8" FontAttributes="Bold" />
+                                <Entry x:Name="TxtPersonalId" IsReadOnly="True" TextColor="#38BDF8" FontAttributes="Bold" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                                <Label Text="Nr. i Dokumentit" FontSize="11" TextColor="#94A3B8" />
+                                <Entry x:Name="TxtDocNumber" IsReadOnly="True" TextColor="#F8FAFC" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="2" Grid.Column="0">
+                                <Label Text="Datëlindja" FontSize="11" TextColor="#94A3B8" />
+                                <Entry x:Name="TxtBirthDate" IsReadOnly="True" TextColor="#F8FAFC" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="2" Grid.Column="1">
+                                <Label Text="Gjinia" FontSize="11" TextColor="#94A3B8" />
+                                <Entry x:Name="TxtGender" IsReadOnly="True" TextColor="#F8FAFC" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="3" Grid.Column="0">
+                                <Label Text="Data e Skadencës" FontSize="11" TextColor="#94A3B8" />
+                                <Entry x:Name="TxtExpiryDate" IsReadOnly="True" TextColor="#F8FAFC" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="3" Grid.Column="1">
+                                <Label Text="Shtetësia / Lloji" FontSize="11" TextColor="#94A3B8" />
+                                <Entry x:Name="TxtNationality" IsReadOnly="True" TextColor="#F8FAFC" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="4" Grid.ColumnSpan="2">
+                                <Label Text="UID Fizike e Çipit NFC" FontSize="11" TextColor="#94A3B8" />
+                                <Entry x:Name="TxtChipUid" IsReadOnly="True" TextColor="#A7F3D0" BackgroundColor="#0F172A" Placeholder="—" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- ==================== VIEW 3: ATTENDANCE REPORTS & CSV EXPORT ==================== -->
+            <VerticalStackLayout x:Name="ViewReports" Spacing="12" IsVisible="False">
+                <Border BackgroundColor="#1E293B" Stroke="#334155" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14">
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" VerticalOptions="Center">
+                            <Label Grid.Column="0" Text="HISTORIKU I HYRJE-DALJEVE" FontSize="13" FontAttributes="Bold" TextColor="#38BDF8" VerticalOptions="Center" />
+                            <Button Grid.Column="1" Text="Eksporto CSV" FontSize="11" FontAttributes="Bold" BackgroundColor="#10B981" TextColor="#0F172A" HeightRequest="34" Padding="10,0" CornerRadius="8" Clicked="OnExportCsvClicked" />
+                            <Button Grid.Column="2" Text="Pastro" FontSize="11" BackgroundColor="#EF4444" TextColor="White" HeightRequest="34" Padding="10,0" CornerRadius="8" Clicked="OnClearLogsClicked" />
+                        </Grid>
+
+                        <VerticalStackLayout x:Name="LogsContainer" Spacing="8" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- APDU Console Log (Always visible at bottom for technical diagnostics) -->
+            <Border BackgroundColor="#090D16" Stroke="#1E293B" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="LOG I KOMANDAVE APDU &amp; DEKRIPTIMIT (ISO 14443-4):" FontSize="10" FontAttributes="Bold" TextColor="#64748B" />
+                    <Label x:Name="LblApduLog" Text="Në pritje të kartës NFC..." FontFamily="Monospace" FontSize="11" TextColor="#34D399" />
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
